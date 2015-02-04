@@ -2,6 +2,7 @@ import sys
 import re
 
 weasels_filename = "weasels.txt"
+irregulars_filename = "irregulars.txt"
 
 def interval_overlap(i1, i2):
   start = max(i1[0], i2[0])
@@ -47,6 +48,20 @@ def create_weasels_lint():
     return weasels_lint
   return None
 
+def create_passive_voice_lint():
+  with open(irregulars_filename) as irregulars_file:
+    regexes = irregulars_file.readlines()
+
+    def passive_voice_lint(string):
+      matches = []
+      ms = re.finditer(r'\s+((am|are|were|being|is|been|was|be)\s+(\w+ed|'+ r'|'.join(regexes) + r'))(\s+|.|,)', string, re.MULTILINE)
+      for m in ms:
+        matches.append(m.span(1))
+      return matches
+
+    return passive_voice_lint
+  return None
+
 def lint(tex_filename, linters):
   with open(tex_filename) as tex_file:
     string = tex_file.read()
@@ -84,7 +99,7 @@ def lint(tex_filename, linters):
 def main():
   tex_filenames = sys.argv[1:]
   for tex_filename in tex_filenames:
-    lint(tex_filename, [create_weasels_lint()])
+    lint(tex_filename, [create_weasels_lint(), create_passive_voice_lint()])
 
 if __name__ == "__main__":
   main()
