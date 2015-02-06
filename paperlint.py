@@ -93,7 +93,7 @@ def lint(tex_filename, linters):
       highlighted_line += string[last_highlight:line_end]
 
       if line_highlights != []:
-        print str(line_number + 1) + ": " + highlighted_line.strip()
+        print str(line_number + 1).rjust(5) + " " * 3 + highlighted_line.strip()
       line_start = line_end
 
 def main():
